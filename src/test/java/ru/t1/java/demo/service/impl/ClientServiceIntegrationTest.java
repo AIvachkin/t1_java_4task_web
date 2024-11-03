@@ -5,12 +5,16 @@ import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import ru.t1.java.demo.kafka.KafkaClientProducer;
 import ru.t1.java.demo.model.Client;
 import ru.t1.java.demo.repository.ClientRepository;
 import ru.t1.java.demo.web.CheckWebClient;
+import ru.t1.java.demo.web.TransactionCheckWireMockServer;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -20,6 +24,8 @@ import static org.mockito.Mockito.when;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestPropertySource("classpath:application-test.yml")
+@Import(TransactionCheckWireMockServer.class)
+@ActiveProfiles("test")
 class ClientServiceIntegrationTest {
 
     @Mock
@@ -30,7 +36,7 @@ class ClientServiceIntegrationTest {
 
     //    @MockBean
     @Autowired
-    CheckWebClient checkWebClient;
+    CheckWebClient testCheckWebClient;
 
     //    @InjectMocks
     @Autowired
@@ -60,4 +66,25 @@ class ClientServiceIntegrationTest {
 
     }
 
+    @Test
+    void registerClients_shouldSaveUnblockedClients() {
+        List<Client> clients = Arrays.asList(
+                new Client("Oleg", "Petrov", "Andreevich", false, "any"),
+                new Client("Olga", "Petrova", "Andreevna", false, "any")
+        );
+
+        List<Client> savedClients = clientService.registerClients(clients);
+
+        assertThat(savedClients).hasSize(2);
+        assertThat(savedClients).extracting(Client::getId).containsExactlyInAnyOrder(1L, 2L);
+    }
+
+    @Test
+    void registerClient_shouldSaveUnblockedClient() {
+        Client client = new Client("Elena", "Ivanova", "Sergeevna", false, "any");
+        Client savedClient = clientService.registerClient(client);
+
+        assertThat(savedClient).isNotNull();
+        assertThat(savedClient.getId()).isEqualTo(3L);
+    }
 }

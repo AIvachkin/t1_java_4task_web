@@ -2,17 +2,16 @@ spring:
   application:
     name: t1-java-demo
   datasource:
-    jdbcUrl: jdbc:h2://${DB_HOST:localhost:5432}/t1_demo
     username: postgres
     password: "0000"
-    driverClassName: org.h2.Driver
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2://${DB_HOST:localhost:5432}/t1_demo
   liquibase:
     enabled: false
     default-schema: t1_demo
     change-log: db/changelog/db.changelog-master.xml
     driver-class-name: org.h2.Driver
-    driverClassName: org.h2.Driver
-    url: jdbc:postgresql://${DB_HOST:localhost:5432}/t1_demo
+    url: jdbc:h2://${DB_HOST:localhost:5432}/t1_demo
     user: postgres
     password: "0000"
   jpa:
@@ -87,6 +86,8 @@ track:
 
 integration:
   url: http://localhost:8088
+  host: localhost
+  port: 8088
   resource: /bsc-wire-mock/api/client/check
   retry-count: 3
   retry-backoff: 1000

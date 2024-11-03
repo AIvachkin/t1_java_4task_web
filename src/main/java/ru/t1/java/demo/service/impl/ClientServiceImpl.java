@@ -40,7 +40,6 @@ public class ClientServiceImpl implements ClientService {
             });
 //            savedClients.add(repository.save(client));
         }
-
         return savedClients;
     }
 
@@ -59,7 +58,7 @@ public class ClientServiceImpl implements ClientService {
 
     @Override
     public List<ClientDto> parseJson() {
-        log.info("Parsing json");
+//        log.info("Parsing json");
         ObjectMapper mapper = new ObjectMapper();
         ClientDto[] clients = new ClientDto[0];
         try {
@@ -74,7 +73,7 @@ public class ClientServiceImpl implements ClientService {
 //            throw new RuntimeException(e);
             log.warn("Exception: ", e);
         }
-        log.info("Found {} clients", clients.length);
+//        log.info("Found {} clients", clients.length);
         return Arrays.asList(clients);
     }
 
